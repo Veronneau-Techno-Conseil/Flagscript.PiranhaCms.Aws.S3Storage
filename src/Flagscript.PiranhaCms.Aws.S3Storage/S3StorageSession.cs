@@ -54,8 +54,8 @@ namespace Flagscript.PiranhaCms.Aws.S3Storage
 		/// <param name="logger">Namespace <see cref="ILogger"/> used for logging.</param>
 		public S3StorageSession(PiranhaS3StorageOptions storageOptions, AWSOptions awsOptions, S3Storage storage, ILogger logger)
 		{
-			S3Storage = storage;
 			StorageOptions = storageOptions ?? throw new ArgumentNullException(nameof(storageOptions));
+			S3Storage = storage ?? throw new ArgumentNullException(nameof(storage));
 			if (awsOptions != null)
 			{
 				S3Client = awsOptions.CreateServiceClient<IAmazonS3>();
@@ -142,8 +142,8 @@ namespace Flagscript.PiranhaCms.Aws.S3Storage
 				ContentType = contentType,
 				InputStream = stream
 			};
-			await S3Client.PutObjectAsync(putRequest);            
-			var mediaUrl = Url.Combine(StorageOptions.PublicUrlPrefix, objectKey);
+			await S3Client.PutObjectAsync(putRequest);
+			var mediaUrl = S3Storage.GetPublicUrl(media, filename);
 			Logger?.LogInformation($"Successfully added Piranha S3 Media {objectKey}, Content Type {contentType} to public URL {mediaUrl}");
 			return mediaUrl;
 		}
